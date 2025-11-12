@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: aqarcom_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: aqarcom
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: aqarcom_user
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - aqarcom_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: aqarcom_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - aqarcom_network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  aqarcom_network:
+    driver: bridge
